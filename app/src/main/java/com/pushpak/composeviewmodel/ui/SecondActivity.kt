@@ -3,14 +3,30 @@ package com.pushpak.composeviewmodel.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
 import com.pushpak.composeviewmodel.R
+import com.pushpak.composeviewmodel.ui.theme.ComposeViewmodelTheme
 
 class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_second)
-        Log.d("CNF_Change", "onCreate_2()")
+        setContent {
+            ComposeViewmodelTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Text(text = "Second Activity")
+                }
+            }
+            //setContentView(R.layout.activity_second)
+            Log.d("CNF_Change", "onCreate_2()")
 
+        }
     }
     override fun onStart() {
         Log.d("CNF_Change", "onStart_2()")

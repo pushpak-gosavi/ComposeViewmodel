@@ -6,21 +6,32 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.ViewModelInitializer
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pushpak.composeviewmodel.ui.SecondActivity
 import com.pushpak.composeviewmodel.ui.theme.ComposeViewmodelTheme
 
+@Suppress("UNCHECKED_CAST")
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,33 +41,36 @@ class MainActivity : ComponentActivity() {
          * if we not want to pass the parameter constructor the only use the
          * viewModels<ViewModelClass>()
          */
-//        val mainViewModel by viewModels<MainViewModel>(
-//             factoryProducer = {
-//                 object : ViewModelProvider.Factory{
-//                     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//                         return MainViewModel(
-//                             string = "Hello Pushpak"
-//                         ) as T
-//                     }
-//                 }
-//             }
-        //)
-        val mainViewModel = MainViewModel("Hello")
+        /*
+        val mainViewModel by viewModels<MainViewModel>(
+                    factoryProducer = {
+                        object : ViewModelProvider.Factory{
+                            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                                return MainViewModel(
+                                    string = "Hello Pushpak"
+                                ) as T
+                            }
+                        }
+                    }
+                )
+         */
         setContent {
             ComposeViewmodelTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = mainViewModel.changeBackground
-                ) {
-                    Button(onClick = { 
-                        //mainViewModel.changeBackgroundColor()
-                        Intent(this, SecondActivity::class.java).also {
-                            startActivity(it)
+                /**
+                 * Using the jetpack compose View Model library
+                 */
+                val mainViewModel = viewModel<MainViewModel>(
+                    factory = object : ViewModelProvider.Factory {
+                        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                            return MainViewModel(
+                                string = "Hello World"
+                            ) as T
                         }
-                    }) {
-                        Text(text = "Change BG")
                     }
+                )
+                // A surface container using the 'background' color from the theme
+                Surface {
+                        CenterButton(mainViewModel = mainViewModel)
                 }
             }
         }
@@ -104,19 +118,30 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun CenterButton(mainViewModel: MainViewModel){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = mainViewModel.changeBackground),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+
+    ) {
+
+        Button(
+            //modifier = Modifier.size(width = 100.dp, height = 30.dp),
+            onClick = {
+                mainViewModel.changeBackgroundColor()
+            }) {
+            Text(text = "Change BG")
+        }
+    }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {
     ComposeViewmodelTheme {
-        Greeting("Android")
+        CenterButton(mainViewModel = MainViewModel(string = "Hello"))
     }
-
-
 }
